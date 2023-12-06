@@ -1,0 +1,2 @@
+- docker build -t mon_image_mysql .
+- docker run -d -p 3306:3306 --name mon_conteneur_mysql mon_image_mysql
