@@ -4,12 +4,11 @@ import mysql.connector
 
 # Créez une connexion à la base de données
 db_connection = mysql.connector.connect(
-    host='localhost',
+    host='',
     user='root',
     password='',
     database='iterator-db'
 )
-
 class MyHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/get':
