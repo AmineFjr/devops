@@ -2,8 +2,8 @@ FROM python:3
 
 WORKDIR /usr/src/app
 
-COPY . .
+COPY .. .
 
-# RUN pip3 install flask
+RUN pip3 install mysql-connector-python
 
-CMD ["python3", "./backend/main.py"]
+CMD ["python3", "main.py"]
