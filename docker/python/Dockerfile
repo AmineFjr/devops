@@ -1,9 +1,12 @@
-FROM python:3
+FROM python:3.9
 
 WORKDIR /usr/src/app
 
+# Installez le module mysql-connector
+RUN pip install mysql-connector
+
+# Copiez le code source dans le conteneur
 COPY . .
 
-# RUN pip3 install flask
 
-CMD ["python3", "./backend/main.py"]
+CMD ["python", "./backend/main.py"]
