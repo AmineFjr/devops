@@ -1,2 +1,2 @@
-- docker build -t my-python-app .
-- docker run my-python-app
+- docker build -t my_python_app .
+- docker run -d -p 3000:5000 --name mon_conteneur_python my_python_app
