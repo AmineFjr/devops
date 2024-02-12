@@ -1,12 +1,9 @@
-FROM python:3.9
+FROM python:3
 
 WORKDIR /usr/src/app
 
-# Installez le module mysql-connector
-RUN pip install mysql-connector
+COPY .. .
 
-# Copiez le code source dans le conteneur
-COPY . .
+RUN pip3 install mysql-connector-python
 
-
-CMD ["python", "./backend/main.py"]
+CMD ["python3", "main.py"]
