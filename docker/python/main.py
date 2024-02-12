@@ -57,7 +57,7 @@ class MyHandler(SimpleHTTPRequestHandler):
         cursor = db_connection.cursor()
 
         try:
-            cursor.execute("UPDATE iterator SET state = %s", (value,))
+            cursor.execute("UPDATE interator SET state = %s", (value,))
             db_connection.commit()
             return json.dumps({'status': 'OK', 'message': 'Iterator value updated successfully'})
         except Exception as e:
