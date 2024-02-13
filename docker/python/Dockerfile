@@ -7,5 +7,3 @@ COPY .. .
 RUN pip3 install mysql-connector-python
 
 CMD ["python3", "main.py"]
-
-EXPOSE 8000
