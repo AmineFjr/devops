@@ -6,8 +6,7 @@
     ansible_python_interpreter: /usr/bin/python3
   tasks:
     - name: Build mon_image_mysql
-      community.docker.docker_image:
+      community.docker.docker_image_build:
         name: mon_image_mysql
-        source: build
-        build:
-          path: "../mysql"
+        path: "../mysql"
+        dockerfile: Dockerfile
