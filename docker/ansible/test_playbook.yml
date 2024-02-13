@@ -1,12 +1,4 @@
 - name: Utiliser le rôle pour afficher une variable
   hosts: localhost
-  become: true
-  gather_facts: no
-  vars:
-    ansible_python_interpreter: /usr/bin/python3
-  tasks:
-    - name: Build mon_image_mysql
-      community.docker.docker_image_build:
-        name: mon_image_mysql
-        path: "../mysql"
-        dockerfile: Dockerfile
+  roles:
+    - role: mon_role

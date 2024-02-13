@@ -1,4 +1,16 @@
-- name: Utiliser le rôle pour afficher une variable
+- name: Lancer les scripts
   hosts: localhost
-  roles:
-    - role: mon_role
+  become: true
+  gather_facts: no
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  tasks:
+    - name: Run clear.sh
+      ansible.builtin.shell: cd ../.. && ./clear.sh
+      ignore_errors: yes
+    - name: Run build.sh
+      ansible.builtin.shell: cd ../.. && ./build.sh
+      ignore_errors: yes
+    - name: Run run.sh
+      ansible.builtin.shell: cd ../.. && ./run.sh
+      ignore_errors: yes
