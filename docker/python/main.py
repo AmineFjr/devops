@@ -1,58 +1,63 @@
+from http.server import SimpleHTTPRequestHandler
+from socketserver import TCPServer
 import json
 import mysql.connector
-from http.server import BaseHTTPRequestHandler, HTTPServer
 
-class MyHandler(BaseHTTPRequestHandler):
+class MyHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
-        if self.path == '/health':
-            self.handle_health()
-        elif self.path == '/get':
-            self.handle_get()
+        if self.path == '/get':
+             self.get_iterator_status()
+        elif self.path == '/health':
+            self.send_json_response(200, {"status": "OK"})
         else:
             self.send_error(404)
 
     def do_POST(self):
         if self.path == '/add':
-            self.handle_add()
+            self.add_iterator()
         else:
             self.send_error(404)
 
-    def handle_health(self):
-        self.send_json_response(200, {"status": "OK"})
+    def get_iterator_status(self):
+        try:
+            with self.get_db_connection() as cnx:
+                cursor = cnx.cursor()
+                query = ("SELECT * FROM interator")
+                cursor.execute(query)
+                iterators = [{"state": state} for state in cursor]
+                self.send_json_response(200, {"status": "ok", "iterators": iterators})
+        except Exception as e:
+            self.send_json_response(404, {'status': 'Error', 'message': str(e)})
+        finally:
+            cursor.close()
 
-    def handle_get(self):
-        with self.get_db_connection() as cnx:
-            cursor = cnx.cursor()
-            query = ("SELECT * FROM iterator")
-            cursor.execute(query)
-            iterators = [{"state": state} for state in cursor]
-            self.send_json_response(200, {"status": "ok", "iterators": iterators})
-
-    def handle_add(self):
-        content_length = int(self.headers['Content-Length'])
-        post_data = self.rfile.read(content_length)
-        data = json.loads(post_data)
-        value = data['value']
-        with self.get_db_connection() as cnx:
-            cursor = cnx.cursor()
-            query = ("INSERT INTO iterator (state) VALUES (%s)")
-            cursor.execute(query, (value,))
-            cnx.commit()
-            self.send_json_response(200, {"status": "ok", "message": "Iterator value added successfully"})
+    def add_iterator(self):
+        try:
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            data = json.loads(post_data)
+            value = data['value']
+            with self.get_db_connection() as cnx:
+                cursor = cnx.cursor()
+                query = ("INSERT INTO interator (state) VALUES (%s)")
+                cursor.execute(query, (value,))
+                cnx.commit()
+                self.send_json_response(200, {"status": "ok", "message": "Iterator value added successfully"})
+        except Exception as e:
+            self.send_json_response(404, {'status': 'Error', 'message': str(e)})
+        finally:
+            cursor.close()
 
     def get_db_connection(self):
-        return mysql.connector.connect(user='root', password='root', host='172.10.0.10', database='iterator-db')
-
+            return mysql.connector.connect(user='root', password='root', host='172.10.0.10', database='iterator-db')
     def send_json_response(self, status, data):
         self.send_response(status)
         self.send_header('Content-type', 'application/json')
         self.end_headers()
         self.wfile.write(json.dumps(data).encode('utf8'))
 
-def run(server_class=HTTPServer, handler_class=MyHandler):
+if __name__ == '__main__':
     server_address = ('', 8080)
-    httpd = server_class(server_address, handler_class)
+    httpd = TCPServer(server_address, MyHandler)
+    print('Serveur démarré sur le port 8080...')
     httpd.serve_forever()
-
-if __name__ == "__main__":
-    run()
