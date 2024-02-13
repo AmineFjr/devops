@@ -1,0 +1,4 @@
+- name: Utiliser le rôle pour afficher une variable
+  hosts: localhost
+  roles:
+    - role: mon_role
